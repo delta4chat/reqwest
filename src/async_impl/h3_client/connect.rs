@@ -20,7 +20,8 @@ type H3Connection = (
 #[derive(Clone)]
 pub(crate) struct H3Connector {
     resolver: DynResolver,
-    endpoint: Endpoint,
+    endpoint_ipv4: Endpoint,
+    endpoint_ipv6: Endpoint,
 }
 
 impl H3Connector {
@@ -35,15 +36,22 @@ impl H3Connector {
         // FIXME: Replace this when there is a setter.
         config.transport_config(Arc::new(transport_config));
 
+        /*
         let socket_addr = match local_addr {
             Some(ip) => SocketAddr::new(ip, 0),
             None => "[::]:0".parse::<SocketAddr>().unwrap(),
         };
+        */
 
-        let mut endpoint = Endpoint::client(socket_addr)?;
-        endpoint.set_default_client_config(config);
+        let mut endpoint_ipv4 = Endpoint::client("0.0.0.0:0".parse().unwrap())?;
+        endpoint_ipv4.set_default_client_config(config.clone());
+        endpoint_ipv4.rebind(std::net::UdpSocket::bind("0.0.0.0:0")?)?;
 
-        Ok(Self { resolver, endpoint })
+        let mut endpoint_ipv6 = Endpoint::client("[::]:0".parse().unwrap())?;
+        endpoint_ipv6.set_default_client_config(config);
+        endpoint_ipv6.rebind(std::net::UdpSocket::bind("[::]:0")?)?;
+
+        Ok(Self { resolver, endpoint_ipv4, endpoint_ipv6 })
     }
 
     pub async fn connect(&mut self, dest: Uri) -> Result<H3Connection, BoxError> {
@@ -76,7 +84,13 @@ impl H3Connector {
     ) -> Result<H3Connection, BoxError> {
         let mut err = None;
         for addr in addrs {
-            match self.endpoint.connect(addr, server_name)?.await {
+            let endpoint =
+                if addr.is_ipv4() {
+                    &self.endpoint_ipv4
+                } else {
+                    &self.endpoint_ipv6
+                };
+            match endpoint.connect(addr, server_name)?.await {
                 Ok(new_conn) => {
                     let quinn_conn = Connection::new(new_conn);
                     return Ok(h3::client::new(quinn_conn).await?);

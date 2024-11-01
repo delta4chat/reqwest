@@ -651,14 +651,17 @@ impl ClientBuilder {
                         HttpVersionPref::Http1 => {
                             tls.alpn_protocols = vec!["http/1.1".into()];
                         }
+
                         #[cfg(feature = "http2")]
                         HttpVersionPref::Http2 => {
                             tls.alpn_protocols = vec!["h2".into()];
                         }
+
                         #[cfg(feature = "http3")]
                         HttpVersionPref::Http3 => {
                             tls.alpn_protocols = vec!["h3".into()];
                         }
+
                         HttpVersionPref::All => {
                             tls.alpn_protocols = vec![
                                 #[cfg(feature = "http2")]
@@ -792,6 +795,7 @@ impl ClientBuilder {
                 accepts: config.accepts,
                 #[cfg(feature = "cookies")]
                 cookie_store: config.cookie_store,
+
                 // Use match instead of map since config is partially moved
                 // and it cannot be used in closure
                 #[cfg(feature = "http3")]
@@ -801,6 +805,7 @@ impl ClientBuilder {
                     }
                     None => None,
                 },
+
                 hyper: builder.build(connector),
                 headers: config.headers,
                 redirect_policy: config.redirect_policy,
@@ -2079,7 +2084,13 @@ impl Client {
     }
 
     pub(super) fn execute_request(&self, req: Request) -> Pending {
-        let (method, url, mut headers, body, timeout, version) = req.pieces();
+        let (method, url, mut headers, body, timeout, mut version) = req.pieces();
+
+        #[cfg(feature = "http3")]
+        if self.inner.h3_client.is_some() {
+            version = http::Version::HTTP_3;
+        }
+
         if url.scheme() != "http" && url.scheme() != "https" {
             return Pending::new_err(error::url_bad_scheme(url));
         }
