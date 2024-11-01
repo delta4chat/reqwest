@@ -29,9 +29,12 @@ features = [
 [features]
 default = ["default-tls", "charset", "unstable", "http3", "macos-system-configuration"]
 
+unstable = []
+
 # Note: this doesn't enable the 'native-tls' feature, which adds specific
 # functionality for it.
-default-tls = ["rustls-tls"]
+#default-tls = ["dep:hyper-tls", "rustls-tls", "__tls", "__rustls"]
+default-tls = ["dep:hyper-tls", "dep:native-tls-crate", "__tls", "dep:tokio-native-tls"]
 
 http2 = ["h2", "hyper/http2", "hyper-util/http2", "hyper-rustls?/http2"]
 
