@@ -1,6 +1,6 @@
 [package]
 name = "reqwest-h3"
-version = "0.13.0"
+version = "0.13.1"
 description = "hitdns fork of higher level HTTP client library"
 keywords = ["http3", "request", "client"]
 categories = ["web-programming::http-client", "wasm"]
