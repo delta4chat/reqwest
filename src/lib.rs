@@ -211,19 +211,16 @@
 //!
 //! ## Unstable Features
 //!
-//! Some feature flags require additional opt-in by the application, by setting
-//! a `reqwest_unstable` flag.
+//! Some feature flags require additional opt-in by the application, by enable `unstable` feature.
 //!
 //! - **http3** *(unstable)*: Enables support for sending HTTP/3 requests.
 //!
 //! These features are unstable, and experimental. Details about them may be
 //! changed in patch releases.
 //!
-//! You can pass such a flag to the compiler via `.cargo/config`, or
-//! environment variables, such as:
 //!
 //! ```notrust
-//! RUSTFLAGS="--cfg reqwest_unstable" cargo build
+//! cargo build -F unstable
 //! ```
 //!
 //! ## Sponsors
@@ -242,13 +239,14 @@
 //! [cargo-features]: https://doc.rust-lang.org/stable/cargo/reference/manifest.html#the-features-section
 //! [sponsor]: https://seanmonstar.com/sponsor
 
-#[cfg(all(feature = "http3", not(reqwest_unstable)))]
-compile_error!(
-    "\
-    The `http3` feature is unstable, and requires the \
-    `RUSTFLAGS='--cfg reqwest_unstable'` environment variable to be set.\
-"
-);
+#[cfg(not(feature = "unstable"))]
+mod _chk_unstable_features {
+    #[cfg(feature = "http3")]
+    compile_error!("The `http3` feature is unstable, and requires the `unstable` feature to be set.");
+
+    //#[cfg(feature = "xxx")]
+    //compile_error!("The `xxx` feature is unstable, and requires the `unstable` feature to be set.");
+}
 
 macro_rules! if_wasm {
     ($($item:item)*) => {$(

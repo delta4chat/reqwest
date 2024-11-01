@@ -1,12 +1,12 @@
 [package]
-name = "reqwest"
-version = "0.12.9"
-description = "higher level HTTP client library"
-keywords = ["http", "request", "client"]
+name = "reqwest-h3"
+version = "0.13.0"
+description = "hitdns fork of higher level HTTP client library"
+keywords = ["http3", "request", "client"]
 categories = ["web-programming::http-client", "wasm"]
-repository = "https://github.com/seanmonstar/reqwest"
-documentation = "https://docs.rs/reqwest"
-authors = ["Sean McArthur <sean@seanmonstar.com>"]
+repository = "https://github.com/delta4chat/reqwest"
+documentation = "https://docs.rs/reqwest-h3"
+authors = ["Sean McArthur <sean@seanmonstar.com>", "Delta 4 <warpan22@proton.me>"]
 readme = "README.md"
 license = "MIT OR Apache-2.0"
 edition = "2021"
@@ -15,7 +15,7 @@ autotests = true
 
 [package.metadata.docs.rs]
 all-features = true
-rustdoc-args = ["--cfg", "docsrs", "--cfg", "reqwest_unstable"]
+#rustdoc-args = ["--cfg", "docsrs", "--cfg", "reqwest_unstable"]
 targets = ["x86_64-unknown-linux-gnu", "wasm32-unknown-unknown"]
 
 [package.metadata.playground]
@@ -27,11 +27,11 @@ features = [
 ]
 
 [features]
-default = ["default-tls", "charset", "http2", "macos-system-configuration"]
+default = ["default-tls", "charset", "unstable", "http3", "macos-system-configuration"]
 
 # Note: this doesn't enable the 'native-tls' feature, which adds specific
 # functionality for it.
-default-tls = ["dep:hyper-tls", "dep:native-tls-crate", "__tls", "dep:tokio-native-tls"]
+default-tls = ["rustls-tls"]
 
 http2 = ["h2", "hyper/http2", "hyper-util/http2", "hyper-rustls?/http2"]
 
@@ -82,7 +82,6 @@ macos-system-configuration = ["dep:system-configuration"]
 
 # Experimental HTTP/3 client.
 http3 = ["rustls-tls-manual-roots", "dep:h3", "dep:h3-quinn", "dep:quinn", "dep:slab", "dep:futures-channel"]
-
 
 # Internal (PRIVATE!) features used to aid testing.
 # Don't rely on these whatsoever. They may disappear at any time.

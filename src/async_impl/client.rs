@@ -1265,7 +1265,7 @@ impl ClientBuilder {
 
     /// Only use HTTP/3.
     #[cfg(feature = "http3")]
-    #[cfg_attr(docsrs, doc(cfg(all(reqwest_unstable, feature = "http3",))))]
+    #[cfg_attr(docsrs, doc(cfg(all(feature = "unstable", feature = "http3",))))]
     pub fn http3_prior_knowledge(mut self) -> ClientBuilder {
         self.config.http_version_pref = HttpVersionPref::Http3;
         self
@@ -1898,7 +1898,7 @@ impl ClientBuilder {
     ///
     /// The default is false.
     #[cfg(feature = "http3")]
-    #[cfg_attr(docsrs, doc(cfg(all(reqwest_unstable, feature = "http3",))))]
+    #[cfg_attr(docsrs, doc(cfg(all(feature = "unstable", feature = "http3",))))]
     pub fn tls_early_data(mut self, enabled: bool) -> ClientBuilder {
         self.config.tls_enable_early_data = enabled;
         self
@@ -1910,7 +1910,7 @@ impl ClientBuilder {
     ///
     /// [`TransportConfig`]: https://docs.rs/quinn/latest/quinn/struct.TransportConfig.html
     #[cfg(feature = "http3")]
-    #[cfg_attr(docsrs, doc(cfg(all(reqwest_unstable, feature = "http3",))))]
+    #[cfg_attr(docsrs, doc(cfg(all(feature = "unstable", feature = "http3",))))]
     pub fn http3_max_idle_timeout(mut self, value: Duration) -> ClientBuilder {
         self.config.quic_max_idle_timeout = Some(value);
         self
@@ -1927,7 +1927,7 @@ impl ClientBuilder {
     ///
     /// Panics if the value is over 2^62.
     #[cfg(feature = "http3")]
-    #[cfg_attr(docsrs, doc(cfg(all(reqwest_unstable, feature = "http3",))))]
+    #[cfg_attr(docsrs, doc(cfg(all(feature = "unstable", feature = "http3",))))]
     pub fn http3_stream_receive_window(mut self, value: u64) -> ClientBuilder {
         self.config.quic_stream_receive_window = Some(value.try_into().unwrap());
         self
@@ -1944,7 +1944,7 @@ impl ClientBuilder {
     ///
     /// Panics if the value is over 2^62.
     #[cfg(feature = "http3")]
-    #[cfg_attr(docsrs, doc(cfg(all(reqwest_unstable, feature = "http3",))))]
+    #[cfg_attr(docsrs, doc(cfg(all(feature = "unstable", feature = "http3",))))]
     pub fn http3_conn_receive_window(mut self, value: u64) -> ClientBuilder {
         self.config.quic_receive_window = Some(value.try_into().unwrap());
         self
@@ -1956,7 +1956,7 @@ impl ClientBuilder {
     ///
     /// [`TransportConfig`]: https://docs.rs/quinn/latest/quinn/struct.TransportConfig.html
     #[cfg(feature = "http3")]
-    #[cfg_attr(docsrs, doc(cfg(all(reqwest_unstable, feature = "http3",))))]
+    #[cfg_attr(docsrs, doc(cfg(all(feature = "unstable", feature = "http3",))))]
     pub fn http3_send_window(mut self, value: u64) -> ClientBuilder {
         self.config.quic_send_window = Some(value);
         self
