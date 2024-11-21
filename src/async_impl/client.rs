@@ -203,7 +203,7 @@ impl ClientBuilder {
                 connect_timeout: None,
                 connection_verbose: false,
                 pool_idle_timeout: Some(Duration::from_secs(90)),
-                pool_max_idle_per_host: std::usize::MAX,
+                pool_max_idle_per_host: usize::MAX,
                 // TODO: Re-enable default duration once hyper's HttpConnector is fixed
                 // to no longer error when an option fails.
                 tcp_keepalive: None, //Some(Duration::from_secs(60)),
@@ -1863,24 +1863,16 @@ impl ClientBuilder {
 
     /// Override DNS resolution for specific domains to a particular IP address.
     ///
-    /// Warning
-    ///
-    /// Since the DNS protocol has no notion of ports, if you wish to send
-    /// traffic to a particular port you must include this port in the URL
-    /// itself, any port in the overridden addr will be ignored and traffic sent
-    /// to the conventional port for the given scheme (e.g. 80 for http).
+    /// Set the port to `0` to use the conventional port for the given scheme (e.g. 80 for http).
+    /// Ports in the URL itself will always be used instead of the port in the overridden addr.
     pub fn resolve(self, domain: &str, addr: SocketAddr) -> ClientBuilder {
         self.resolve_to_addrs(domain, &[addr])
     }
 
     /// Override DNS resolution for specific domains to particular IP addresses.
     ///
-    /// Warning
-    ///
-    /// Since the DNS protocol has no notion of ports, if you wish to send
-    /// traffic to a particular port you must include this port in the URL
-    /// itself, any port in the overridden addresses will be ignored and traffic sent
-    /// to the conventional port for the given scheme (e.g. 80 for http).
+    /// Set the port to `0` to use the conventional port for the given scheme (e.g. 80 for http).
+    /// Ports in the URL itself will always be used instead of the port in the overridden addr.
     pub fn resolve_to_addrs(mut self, domain: &str, addrs: &[SocketAddr]) -> ClientBuilder {
         self.config
             .dns_overrides
